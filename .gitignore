@@ -46,7 +46,7 @@ myvenv/
 */.venv
 
 # IDEs and Editors
-.idea/           # IntelliJ IDEA
+idea/           # IntelliJ IDEA
 *.iml            # IntelliJ IDEA
 .project         # Eclipse
 .settings/       # Eclipse
