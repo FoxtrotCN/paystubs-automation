@@ -1,0 +1,93 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+build/
+dist/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.whl
+MANIFEST
+
+# PyInstaller
+#  Usually these files are written into a dist/ directory.
+#  But putting them here is safer, just in case.
+build
+dist
+*.manifest
+*.spec
+
+# Others
+*.log
+*.bak
+*~
+
+# virtualenv
+.venv/
+venv/
+env/
+ENV/
+myvenv/
+*/.venv
+
+# IDEs and Editors
+.idea/           # IntelliJ IDEA
+*.iml            # IntelliJ IDEA
+.project         # Eclipse
+.settings/       # Eclipse
+/target/         # Maven (Java)
+*.esproj        # Visual Studio (Xamarin)
+*.csproj.user    # Visual Studio
+*.suo             # Visual Studio
+*.ntvs*          # Visual Studio
+*.njsproj       # Visual Studio
+*.sln            # Visual Studio
+*.swp            # Vim swap files
+*~               # Backup files from various editors
+~$*              # Temporary files from Microsoft Word
+*.tmproj         # TextMate project
+.DS_Store       # macOS Finder metadata
+Thumbs.db         # Windows thumbnail cache
+ehthumbs.db       # Windows extended thumbnail cache
+
+# VS Code
+.vscode/
+
+# JetBrains
+*.iws
+*.ipr
+
+# Caches
+*.pyc
+*.pyo
+
+# Distribution / packaging
+env
+develop-eggs/
+downloads
+.eggs
+parts
+sdist
+var
+wheels
+share/python-wheels
+pip-log.txt
+pip-delete-this.txt
+wheel-errors.txt
+bdist.egg
+bdist.*
