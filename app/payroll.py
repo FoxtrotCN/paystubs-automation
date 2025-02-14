@@ -1,7 +1,9 @@
 import csv
 import io
+from datetime import datetime
+from pdf_generator import generate_pdf
 
-from flask import jsonify
+from flask import jsonify, render_template
 
 from config import settings
 
