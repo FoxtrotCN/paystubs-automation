@@ -22,7 +22,7 @@ def process_paystubs():
         return jsonify({"success": False, "message": "user or password incorrect."}), 401
 
     if request.method == "POST":
-        employees = parse_csv_data(request.get_data(), country)
+        employees = parse_csv_data(request.get_data())
         sent_emails = generate_pdf_and_send_email(employees, country)
 
         return jsonify({"success": True, "sent_emails": json.loads(sent_emails)}), 200
