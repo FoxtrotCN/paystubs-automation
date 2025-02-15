@@ -91,7 +91,7 @@ def generate_pdf_and_send_email(employees, country=None):
             buffer.close()
 
             email_info = send_email(employee['email'], pdf_content,
-                                    f"comprobante_{employee['full_name'].replace(' ', '_')}.pdf")
+                                    f"paystub{employee['full_name'].replace(' ', '_')}.pdf")
             sent_emails.append(email_info)
 
         return json.dumps(sent_emails)
