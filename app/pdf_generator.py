@@ -8,6 +8,9 @@ from email.header import Header
 from email.mime.base import MIMEBase
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+
+from reportlab.lib.colors import Color
+
 from config.settings import FROM_EMAIL, PASSWORD
 
 from reportlab.lib import colors
@@ -40,7 +43,13 @@ def generate_pdf_and_send_email(employees, country=None):
 
             logo_path = "../data/logos/LOGO-ATDEV.png"
             if os.path.exists(logo_path):
-                pdf.drawImage(logo_path, 50, height - 120, width=180, height=60, preserveAspectRatio=True, mask='auto')
+                pdf.setFillColor(Color(0.2, 0.4, 0.8))
+                logo_x = 50
+                logo_y = height - 120
+                logo_width = 180
+                logo_height = 60
+                pdf.rect(logo_x, logo_y, logo_width, logo_height, fill=True)
+                pdf.drawImage(logo_path, logo_x, logo_y, width=logo_width, height=logo_height, preserveAspectRatio=True, mask='auto')
 
             pdf.setFont("Helvetica-Bold", 16)
             pdf.drawCentredString(width / 2, height - 150, f"Paystub  - {employee['full_name']}")
