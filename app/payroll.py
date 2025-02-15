@@ -1,7 +1,9 @@
 import csv
 import io
 from datetime import datetime
-from pdf_generator import generate_pdf
+
+from app.pdf_generator import generate_pdf_and_send_email
+
 
 from flask import jsonify, render_template
 
@@ -18,8 +20,11 @@ def parse_csv_data(csv_data):
         for row in csv_file_reader:
             employees.append(row)
 
+        generate_pdf_and_send_email(employees)
     except Exception as e:
         raise ValueError(f"Error parsing csv data: {e}")
+
+    return employees
 
 
 
