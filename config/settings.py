@@ -1,5 +1,3 @@
-from flask import Flask
-from flask_mail import Mail
 import os
 from dotenv import load_dotenv
 

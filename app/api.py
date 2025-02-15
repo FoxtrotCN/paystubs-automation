@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify
 from config.settings import API_USER, API_PASSWORD
-from payroll import parse_csv_data, generate_pdf_and_send_email
+from app.payroll import parse_csv_data
+from app.pdf_generator import generate_pdf_and_send_email
 import json
 
 app = Flask(__name__)

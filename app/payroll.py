@@ -1,13 +1,7 @@
 import csv
 import io
-from datetime import datetime
-
-from app.pdf_generator import generate_pdf_and_send_email
 
 
-from flask import jsonify, render_template
-
-from config import settings
 
 employees = []
 
