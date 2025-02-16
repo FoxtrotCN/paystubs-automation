@@ -141,7 +141,6 @@ def generate_pdf_and_send_email(employees, country=None, company=None):
     return json.dumps(sent_emails)
 
 
-
 def send_email(to_email, pdf_content, filename):
     sent_emails = []
     from_email = FROM_EMAIL
