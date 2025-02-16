@@ -8,7 +8,11 @@ COPY requirements.txt requirements.txt
 
 RUN pip3 install --no-cache-dir -r requirements.txt
 
+COPY data ./data
+
 COPY . .
+
+EXPOSE 5000
 
 ENV FLASK_APP=app.api
 

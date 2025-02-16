@@ -24,7 +24,7 @@ def process_paystubs():
 
     if request.method == "POST":
         employees = parse_csv_data(request.get_data())
-        sent_emails = generate_pdf_and_send_email(employees, country)
+        sent_emails = generate_pdf_and_send_email(employees, country, company)
 
         return jsonify({"success": True, "sent_emails": json.loads(sent_emails)}), 200
 

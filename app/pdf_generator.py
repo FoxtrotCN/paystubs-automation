@@ -18,157 +18,128 @@ from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
 from reportlab.platypus import Table, TableStyle
 
-fields_translation = {
-    "english": [
-        'Gross Salary',
-        'Gross Payment',
-        'Net Payment',
-        'Health Insurance',
-        'Social Security',
-        'Taxes',
-        'Others',
-        'Paystub Payment',
-        'Period'
-    ]
+country_configuration = {
+    "USA": {
+        "translations": {
+            "employee": "Employee",
+            "position": "Position",
+            "pay_period": "Payroll Period",
+            "email": "Email",
+            "gross_salary": "Gross Salary",
+            "gross_payment": "Gross Payment",
+            "net_payment": "Net Payment",
+            "health_discount": "Health Discount",
+            "social_discount": "Social Discount",
+            "taxes_discount": "Taxes Discount",
+            "other_discount": "Other Discount",
+        },
+        "filename_format": "paystub_{}.pdf",
+        "company_logo_path": "../data/LOGO-ATDEV.png",
+        "default_logo_path": "../data/default.png",
+        "title": "Paystub"
+    },
+    "do": {
+        "translations": {
+            "employee": "Empleado",
+            "position": "Cargo",
+            "pay_period": "Periodo de Pago",
+            "email": "Correo Electronico",
+            "gross_salary": "Salario Bruto",
+            "gross_payment": "Pago Bruto",
+            "net_payment": "Pago Neto",
+            "health_discount": "Descuento de Salud",
+            "social_discount": "Descuento Seguro Social",
+            "taxes_discount": "Descuento de Impuestos",
+            "other_discount": "Otros Descuentos",
+        },
+        "filename_format": "comprobante_{}.pdf",
+        "company_logo_path": "../data/LOGO-ATDEV.png",
+        "default_logo_path": "../data/default.png",
+        "title": "Comprobante de Pago"
+    }
 }
 
+def generate_pdf(employee, details, salary_details, company):
+    buffer = BytesIO()
+    pdf = canvas.Canvas(buffer, pagesize=letter)
+    width, height = letter
+    logo_path = "data/logos/default.png"
 
-def generate_pdf_and_send_email(employees, country=None):
+    if company == "atdev":
+        logo_path = "data/logos/LOGO-ATDEV.png"
+
+    if os.path.exists(logo_path):
+        pdf.setFillColor(Color(0.2, 0.4, 0.8))
+        logo_x = 50
+        logo_y = height - 120
+        logo_width = 180
+        logo_height = 60
+        pdf.rect(logo_x, logo_y, logo_width, logo_height, fill=True)
+        pdf.drawImage(logo_path, logo_x, logo_y, width=logo_width, height=logo_height, preserveAspectRatio=True,
+                      mask='auto')
+
+    pdf.setFont("Helvetica-Bold", 16)
+    pdf.drawCentredString(width / 2, height - 150, f"Paystub  - {employee['full_name']}")
+
+    pdf.setFont("Helvetica", 12)
+
+    def create_table(data, x, y):
+        table = Table(data, colWidths=[150, 200])
+        table.setStyle(TableStyle([
+            ('BACKGROUND', (0, 0), (-1, 0), colors.lightgrey),
+            ('GRID', (0, 0), (-1, -1), 1, colors.black),
+            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+            ('FONTNAME', (0, 1), (-1, -1), 'Helvetica'),
+            ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
+            ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+            ('BOTTOMPADDING', (0, 0), (-1, 0), 6),
+            ('TOPPADDING', (0, 0), (-1, 0), 6),
+        ]))
+        table.wrapOn(pdf, width, height)
+        table.drawOn(pdf, x, y)
+
+    create_table(details, 50, height - 250)
+    create_table(salary_details, 50, height - 450)
+
+    pdf.setFont("Helvetica", 10)
+    pdf.drawCentredString(width / 2, 50, f"Date: {datetime.date.today()}")
+
+    pdf.save()
+
+    buffer.seek(0)
+    pdf_content = buffer.getvalue()
+    buffer.close()
+
+    return pdf_content
+
+def generate_pdf_and_send_email(employees, country=None, company=None):
     sent_emails = []
-    if country == "USA":
-        for employee in employees:
-            buffer = BytesIO()
-            pdf = canvas.Canvas(buffer, pagesize=letter)
-            width, height = letter
-
-            logo_path = "../data/logos/LOGO-ATDEV.png"
-            if os.path.exists(logo_path):
-                pdf.setFillColor(Color(0.2, 0.4, 0.8))
-                logo_x = 50
-                logo_y = height - 120
-                logo_width = 180
-                logo_height = 60
-                pdf.rect(logo_x, logo_y, logo_width, logo_height, fill=True)
-                pdf.drawImage(logo_path, logo_x, logo_y, width=logo_width, height=logo_height, preserveAspectRatio=True, mask='auto')
-
-            pdf.setFont("Helvetica-Bold", 16)
-            pdf.drawCentredString(width / 2, height - 150, f"Paystub  - {employee['full_name']}")
-
-            pdf.setFont("Helvetica", 12)
+    config = country_configuration.get(country, country_configuration[country])
+    for employee in employees:
             details = [
-                ["Employee:", employee['full_name']],
-                ["Position:", employee['position']],
-                ["Pay Period:", employee['period']],
-                ["Email:", employee['email']]
+                [config["translations"]["employee"], employee['full_name']],
+                [config["translations"]["position"], employee['position']],
+                [config["translations"]["pay_period"], employee['period']],
+                [config["translations"]["email"], employee['email']]
             ]
 
             salary_details = [
-                [fields_translation["english"][0], employee['gross_salary']],
-                [fields_translation["english"][1], employee['gross_payment']],
-                [fields_translation["english"][2], employee['net_payment']],
-                [fields_translation["english"][3], employee['health_discount_amount']],
-                [fields_translation["english"][4], employee['social_discount_amount']],
-                [fields_translation["english"][5], employee['taxes_discount_amount']],
-                [fields_translation["english"][6], employee['other_discount_amount']]
+                [config["translations"]["gross_salary"], employee['gross_salary']],
+                [config["translations"]["gross_payment"], employee['gross_payment']],
+                [config["translations"]["net_payment"], employee['net_payment']],
+                [config["translations"]["health_discount"], employee['health_discount_amount']],
+                [config["translations"]["social_discount"], employee['social_discount_amount']],
+                [config["translations"]["taxes_discount"], employee['taxes_discount_amount']],
+                [config["translations"]["other_discount"], employee['other_discount_amount']]
             ]
 
-            def create_table(data, x, y):
-                table = Table(data, colWidths=[150, 200])
-                table.setStyle(TableStyle([
-                    ('BACKGROUND', (0, 0), (-1, 0), colors.lightgrey),
-                    ('GRID', (0, 0), (-1, -1), 1, colors.black),
-                    ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-                    ('FONTNAME', (0, 1), (-1, -1), 'Helvetica'),
-                    ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
-                    ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
-                    ('BOTTOMPADDING', (0, 0), (-1, 0), 6),
-                    ('TOPPADDING', (0, 0), (-1, 0), 6),
-                ]))
-                table.wrapOn(pdf, width, height)
-                table.drawOn(pdf, x, y)
-
-            create_table(details, 50, height - 250)
-            create_table(salary_details, 50, height - 450)
-
-            pdf.setFont("Helvetica", 10)
-            pdf.drawCentredString(width / 2, 50, f"Date: {datetime.date.today()}")
-
-            pdf.save()
-
-            buffer.seek(0)
-            pdf_content = buffer.getvalue()
-            buffer.close()
-
-            email_info = send_email(employee['email'], pdf_content,
-                                    f"paystub{employee['full_name'].replace(' ', '_')}.pdf")
+            pdf_content = generate_pdf(employee, details, salary_details, company)
+            file_name = config["filename_format"].format(employee['full_name'].replace(" ", "_"))
+            email_info = send_email(employee['email'], pdf_content, file_name)
             sent_emails.append(email_info)
 
-        return json.dumps(sent_emails)
+    return json.dumps(sent_emails)
 
-    else:
-        for employee in employees:
-            buffer = BytesIO()
-            pdf = canvas.Canvas(buffer, pagesize=letter)
-            width, height = letter
-
-            logo_path = "../data/logos/LOGO-ATDEV.png"
-            if os.path.exists(logo_path):
-                pdf.drawImage(logo_path, 50, height - 120, width=180, height=60, preserveAspectRatio=True,
-                              mask='auto')
-
-            pdf.setFont("Helvetica-Bold", 16)
-            pdf.drawCentredString(width / 2, height - 150, f"Comprobante de Pago - {employee['full_name']}")
-
-            pdf.setFont("Helvetica", 12)
-            details = [
-                ["Empleado:", employee['full_name']],
-                ["Posicion:", employee['position']],
-                ["Periodo:", employee['period']],
-                ["Correo Electronico:", employee['email']]
-            ]
-
-            salary_details = [
-                ["Salario Bruto:", employee['gross_salary']],
-                ["Pago Bruto:", employee['gross_payment']],
-                ["Pago Neto:", employee['net_payment']],
-                ["Descuento Salud:", employee['health_discount_amount']],
-                ["Descuento Social:", employee['social_discount_amount']],
-                ["Descuento Impuestos:", employee['taxes_discount_amount']],
-                ["Otros Descuentos:", employee['other_discount_amount']]
-            ]
-
-            def create_table(data, x, y):
-                table = Table(data, colWidths=[150, 200])
-                table.setStyle(TableStyle([
-                    ('BACKGROUND', (0, 0), (-1, 0), colors.lightgrey),
-                    ('GRID', (0, 0), (-1, -1), 1, colors.black),
-                    ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-                    ('FONTNAME', (0, 1), (-1, -1), 'Helvetica'),
-                    ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
-                    ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
-                    ('BOTTOMPADDING', (0, 0), (-1, 0), 6),
-                    ('TOPPADDING', (0, 0), (-1, 0), 6),
-                ]))
-                table.wrapOn(pdf, width, height)
-                table.drawOn(pdf, x, y)
-
-            create_table(details, 50, height - 250)
-            create_table(salary_details, 50, height - 450)
-
-            pdf.setFont("Helvetica", 10)
-            pdf.drawCentredString(width / 2, 50, f"Fecha: {datetime.date.today()}")
-
-            pdf.save()
-
-            buffer.seek(0)
-            pdf_content = buffer.getvalue()
-            buffer.close()
-
-            email_info = send_email(employee['email'], pdf_content,
-                                    f"comprobante_{employee['full_name'].replace(' ', '_')}.pdf")
-            sent_emails.append(email_info)
-
-        return json.dumps(sent_emails)
 
 
 def send_email(to_email, pdf_content, filename):
