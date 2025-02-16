@@ -3,7 +3,7 @@
 Automatización de la generación y gestión de **paystubs** (recibos de pago). Esta API permite la creación y envío automatizado de comprobantes de pago, optimizando procesos administrativos sin necesidad de una base de datos.  
 
 ## 🛠️ Tecnologías utilizadas  
-- 🐍 **Python** + **Flask** (Backend)  
+- 🐍 **Python >= 3.11** + **Flask >= 3.1.0** (Backend)  
 - 🐳 **Docker** (Contenedores)  
 
 ## ✅ Requisitos previos  
@@ -18,11 +18,43 @@ Clona el repositorio y entra en la carpeta del proyecto:
   cd paystubs_automation
 ```
 
-#### 1 - Renombra el archivo .env-test a .env:
+## 🚀 Para correr el proyecto localmente
+
+#### 1. Crear un entorno virtual
+```bash
+    python3 -m venv venv
+```
+
+#### 2. Activa el entorno virtual
+**macOS/Linux**
+```bash
+    source venv/bin/activate
+```
+
+**Windows**
+```bash
+    .\venv\Scripts\activate
+```
+
+#### 3. Instalar dependencias
+```bash
+    pip install -r requirements.txt
+```
+
+#### 4. Subir el Servidor de Flask
+```bash
+    export FLASK_APP=app/api
+```
 
 ```bash
-  mv .env-test .env
+    export FLASK_ENV=development
 ```
+
+```bash
+    flask run
+```
+
+---
 
 ## 🐳 Levantar la API con Docker
 Para construir la imagen y ejecutar el contenedor con Docker:
