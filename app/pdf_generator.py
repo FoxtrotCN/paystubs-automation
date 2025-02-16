@@ -16,7 +16,7 @@ country_configuration = {
     "USA": {
         "translations": {
             "employee": "Employee",
-            "position": "Position",
+            "position": "Job Title",
             "pay_period": "Payroll Period",
             "email": "Email",
             "gross_salary": "Gross Salary",
