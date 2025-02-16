@@ -1,6 +1,7 @@
 import datetime
 import json
 import os
+import unicodedata
 from io import BytesIO
 
 from reportlab.lib.colors import Color
@@ -128,6 +129,7 @@ def generate_pdf_and_send_email(employees, country=None, company=None):
 
             pdf_content = generate_pdf(employee, details, salary_details, company)
             file_name = config["filename_format"].format(employee['full_name'].replace(" ", "_"))
+            file_name = unicodedata.normalize("NFKD", file_name).encode("ascii", "ignore").decode('utf-8')
             email_info = send_email(employee['email'], pdf_content, file_name)
             sent_emails.append(email_info)
 
